@@ -1,0 +1,162 @@
+/****************************************************************************
+
+ Copyright (C) 2016-2017 INRA (Institut National de la Recherche Agronomique, France) and IGN (Institut National de l'information Géographique et forestière, France)
+ All rights reserved.
+
+ Contact : jan.hackenberg@posteo.de
+
+ Developers : Jan Hackenberg
+
+ This file is part of Simpletree plugin Version 4 for Computree.
+
+ Simpletree plugin is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Simpletree plugin is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Simpletree plugin.  If not, see <http://www.gnu.org/licenses/>.
+
+*****************************************************************************/
+
+#ifndef ST_STEPENRICHCLOUDWITHCURVATURE_H
+#define ST_STEPENRICHCLOUDWITHCURVATURE_H
+
+#include "ct_step/abstract/ct_abstractstep.h"
+#include "ct_itemdrawable/ct_pointsattributesnormal.h"
+#include "ct_itemdrawable/ct_pointsattributesscalartemplated.h"
+#include "ct_itemdrawable/abstract/ct_abstractitemdrawablewithpointcloud.h"
+#include "ct_itemdrawable/tools/iterator/ct_groupiterator.h"
+#include "ct_result/ct_resultgroup.h"
+#include "ct_result/model/inModel/ct_inresultmodelgrouptocopy.h"
+#include "ct_normalcloud/ct_normalcloudstdvector.h"
+#include "ct_result/model/outModel/tools/ct_outresultmodelgrouptocopypossibilities.h"
+#include "ct_view/ct_stepconfigurabledialog.h"
+#include "ct_iterator/ct_pointiterator.h"
+
+#include "SimpleTree4/model/pointsimpletree.h"
+#include "SimpleTree4/method/point_cloud_operations/enrichcloud.h"
+
+
+#include <stdlib.h>
+#include <QtGlobal>
+
+// Inclusion of auto-indexation system
+#include "ct_tools/model/ct_autorenamemodels.h"
+
+/*!
+ * \class ST_StepStemPointDetection
+ * \ingroup Steps_ST
+ * \brief <b>detects stem points.</b>
+ *
+ * No detailled description for this step
+ *
+ * \param _param1 
+ *
+ */
+
+class ST_StepEnrichCloudWithCurvature: public CT_AbstractStep
+{
+    Q_OBJECT
+
+public:
+
+    /*! \brief Step constructor
+     * 
+     * Create a new instance of the step
+     * 
+     * \param dataInit Step parameters object
+     */
+    ST_StepEnrichCloudWithCurvature(CT_StepInitializeData &dataInit);
+
+    /*! \brief Step description
+     * 
+     * Return a description of the step function
+     */
+    QString getStepDescription() const;
+
+    /*! \brief Step detailled description
+     * 
+     * Return a detailled description of the step function
+     */
+    QString getStepDetailledDescription() const;
+
+    /*! \brief Step URL
+     * 
+     * Return a URL of a wiki for this step
+     */
+    QString getStepURL() const;
+
+    /*! \brief Step copy
+     * 
+     * Step copy, used when a step is added by step contextual menu
+     */
+    CT_VirtualAbstractStep* createNewInstance(CT_StepInitializeData &dataInit);
+
+protected:
+
+    /*! \brief Input results specification
+     * 
+     * Specification of input results models needed by the step (IN)
+     */
+    void createInResultModelListProtected();
+
+    /*! \brief Parameters DialogBox
+     * 
+     * DialogBox asking for step parameters
+     */
+    void createPostConfigurationDialog();
+
+    /*! \brief Output results specification
+     * 
+     * Specification of output results models created by the step (OUT)
+     */
+    void createOutResultModelListProtected();
+
+    /*! \brief Algorithm of the step
+     * 
+     * Step computation, using input results, and creating output results
+     */
+    void compute();
+
+private:
+
+    void
+    enrich_cloud(const CT_AbstractItemDrawableWithPointCloud *itemCpy_cloud_in, CT_ResultGroup* resCpy_res, CT_StandardItemGroup* grpCpy_grp);
+
+        void create_simple_tree_cloud(const CT_AbstractItemDrawableWithPointCloud* itemCpy_cloud_in);
+
+    PointCloudS::Ptr _cloud;
+
+    // Declaration of autoRenames Variables (groups or items added to In models copies)
+    CT_AutoRenameModels    _cloud_out_normals;
+    CT_AutoRenameModels    _cloud_out_curvature;
+    CT_AutoRenameModels    _cloud_out_eigen1;
+    CT_AutoRenameModels    _cloud_out_eigen2;
+    CT_AutoRenameModels    _cloud_out_eigen3;
+    CT_AutoRenameModels    _cloud_out_stem;
+
+
+    CT_AutoRenameModels    _cloud_out_normals2;
+    CT_AutoRenameModels    _cloud_out_curvature2;
+    CT_AutoRenameModels    _cloud_out_eigen12;
+    CT_AutoRenameModels    _cloud_out_eigen22;
+    CT_AutoRenameModels    _cloud_out_eigen32;
+    CT_AutoRenameModels    _cloud_out_stem2;
+
+    // Step parameters
+    double    _range;
+    bool _use_knn;
+    int _knn;
+
+
+
+};
+
+#endif // ST_STEPENRICHCLOUDWITHCURVATURE_H
+
